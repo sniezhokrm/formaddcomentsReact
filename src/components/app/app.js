@@ -29,15 +29,15 @@ export default class App extends Component {
     this.onUpdateSearch = this.onUpdateSearch.bind(this);
     this.filterPosts= this.filterPosts.bind(this);
     this.activeButton= this.activeButton.bind(this);
+    this.onToggle= this.onToggle.bind(this);
   }
 
 
   deleteItem(id) {
-    this.setState(({data}, {numPost}) => {
+    this.setState(({data}) => {
       const index = data.findIndex(elem => elem.id === id);//визначаємо номер елемента по ід
       const newArr = [...data.slice(0, index), ...data.slice(index + 1)]
       return {
-        numPosts: newArr.length,
         data: newArr
       }
     })
@@ -50,19 +50,23 @@ export default class App extends Component {
       important: false,
       id: random
     }
-      this.setState(({data}) => {
-      const newArr = [...data, newItem]
-
-      return {
-        data: newArr
-
+    this.setState(({data}) => {
+    const newArr = [...data, newItem]
+    return {
+      data: newArr
       }
     })
   }
-onToggleImportant(id) {
+onToggle (id, stan) {
   this.setState(({data}) => {
     const index = data.findIndex(elem => elem.id === id);
-    const newItem = {...data[index], important: !data[index].important};
+    let st = {};
+    if (stan === 'like') {
+      st = {like: !data[index].like};
+    } else {
+      st = {important: !data[index].important}
+    }
+    const newItem = {...data[index], ...st};
     const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
     return {
       data: newArr
@@ -70,15 +74,12 @@ onToggleImportant(id) {
   })
 }
 onToggleLike(id) {
-  this.setState(({data}) => {
-    const index = data.findIndex(elem => elem.id === id);
-    const newItem = {...data[index], like: !data[index].like};
-    const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
-    return {
-      data: newArr
-    }
-  })
+    this.onToggle (id, 'like');
 }
+onToggleImportant(id) {
+    this.onToggle (id, 'important');
+}
+
 searchPosts(items, term) {
   if (term.length === 0) {
     return items;
@@ -101,6 +102,7 @@ activeButton(filter) {
   this.setState({filter})
 }
   render() {
+
 const {data, term, filter} = this.state;
 const likeNum = data.filter(elem => elem.like).length;
 const postsNum = data.length;

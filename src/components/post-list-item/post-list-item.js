@@ -7,7 +7,7 @@ export default class PostListItem extends Component {
     }
 
   render() {
-    const {label, onDelete, onToggleLike, onToggleImportant, important, like} = this.props
+    const {label, onDelete, onToggleLike, onToggleImportant, onToggle, important, like} = this.props
     let classNames = 'app-list-item d-flex justify-content-between';
     if (important) {
            classNames +=' important';
